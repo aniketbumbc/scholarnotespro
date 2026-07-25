@@ -2,17 +2,18 @@ import { randomUUID } from "crypto";
 import { getDb as db } from "../config/mongo";
 
 export type SourceStatus = "queued" | "processing" | "ready" | "failed";
-
 export async function createSource(input: {
   title: string;
   sourceType: "pdf" | "youtube";
-  filePath?: string;
+  filePath?: string; // pdf
+  videoId?: string; // youtube
+  playlistId?: string; // youtube, when part of a series
 }) {
   const sourceId = randomUUID();
   await (await db()).collection("sources").insertOne({
     _id: sourceId as any,
     ...input,
-    status: "queued" as SourceStatus,
+    status: "queued",
     createdAt: new Date(),
   });
   return sourceId;

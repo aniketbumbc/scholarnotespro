@@ -22,6 +22,6 @@ export async function POST(req: NextRequest) {
   const title = (form.get("title") as string) || file.name;
   const sourceId = await createSource({ title, sourceType: "pdf", filePath });
 
-  await ingestionQueue.add("ingest-pdf", { sourceId, filePath, title });
+  await ingestionQueue.add("ingest-pdf", { sourceId, title, filePath });
   return NextResponse.json({ sourceId, status: "queued" });
 }
