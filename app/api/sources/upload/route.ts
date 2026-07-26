@@ -4,6 +4,7 @@ import { randomUUID } from "crypto";
 import { join } from "path";
 import { createSource } from "../../../src/models/source.model";
 import { ingestionQueue } from "../../../src/queue/ingestion.queue";
+import { validatePdf } from "@/app/src/lib/validate";
 
 export async function POST(req: NextRequest) {
   const form = await req.formData();
@@ -11,6 +12,10 @@ export async function POST(req: NextRequest) {
   if (!file) return NextResponse.json({ error: "No file" }, { status: 400 });
 
   const buf = Buffer.from(await file.arrayBuffer());
+
+  const validation = validatePdf(file, buf);
+  if (!validation.ok) return NextResponse.json({ error: validation.error }, { status: 400 });
+
   const uploadDir = join(process.cwd(), "uploadspdf");
 
   await mkdir(uploadDir, { recursive: true });

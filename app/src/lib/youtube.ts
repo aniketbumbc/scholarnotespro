@@ -1,3 +1,5 @@
+import { VIDEO_ID, PLAYLIST_ID } from "./validate";
+
 export type ParsedYouTube =
   { kind: "video"; videoId: string } | { kind: "playlist"; playlistId: string };
 
@@ -7,7 +9,9 @@ export function parseYouTubeUrl(raw: string): ParsedYouTube {
 
   // Pure playlist page: /playlist?list=...
   if (url.searchParams.get("list")) {
-    return { kind: "playlist", playlistId: url.searchParams.get("list")! };
+    const playlistId = url.searchParams.get("list")!;
+    if (!PLAYLIST_ID.test(playlistId)) throw new Error(`Invalid playlist ID: ${playlistId}`);
+    return { kind: "playlist", playlistId };
   }
 
   const m = url.pathname.match(/^\/(?:shorts|embed)\/([^/]+)/);
@@ -43,6 +47,7 @@ export async function fetchPlaylistItems(playlistId: string) {
 
     for (const it of data.items ?? []) {
       const videoId = it.contentDetails?.videoId;
+      if (!VIDEO_ID.test(videoId)) throw new Error(`Invalid video ID: ${videoId}`);
       const title = it.snippet?.title;
       // skip private/deleted entries — they can't be transcribed
       if (videoId && title && !["Private video", "Deleted video"].includes(title)) {
@@ -65,8 +70,6 @@ export async function fetchVideoDetails(videoId: string) {
   finalUrl.searchParams.set("part", "snippet,contentDetails");
   finalUrl.searchParams.set("id", videoId);
   finalUrl.searchParams.set("key", key);
-
-  console.log(finalUrl);
 
   const res = await fetch(finalUrl);
   if (!res.ok) throw new Error(`YouTube API ${res.status}`);
