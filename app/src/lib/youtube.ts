@@ -74,6 +74,5 @@ export async function fetchVideoDetails(videoId: string) {
   const res = await fetch(finalUrl);
   if (!res.ok) throw new Error(`YouTube API ${res.status}`);
   const data = await res.json();
-  console.log(data);
   return data;
 }

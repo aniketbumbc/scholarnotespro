@@ -35,3 +35,12 @@ export async function getChunksByIds(chunkIds: string[]) {
     .find({ _id: { $in: chunkIds as any } })
     .toArray();
 }
+
+export async function getChunksBySource(sourceId: string) {
+  const db = await getDb();
+  return db
+    .collection<Chunk>("chunks")
+    .find({ sourceId })
+    .sort({ chunkIndex: 1 }) // in document order — critical for coherent summary
+    .toArray();
+}

@@ -17,9 +17,6 @@ export async function generateAnswer(question: string, chunks: RetrievedChunk[])
     .map((c) => `[chunkId: ${c.chunkId}] (page ${c.page})\n${c.text}`)
     .join("\n\n---\n\n");
 
-  console.log("[answer] context:", context);
-  console.log("[answer] question:", question);
-
   const prompt = `
 You answer strictly from the provided context — never from your own knowledge.
 

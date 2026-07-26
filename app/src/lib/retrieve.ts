@@ -34,8 +34,6 @@ export async function retrieve(
   const ids = res.matches.map((m) => m.id);
   const mongoChunks = await getChunksByIds(ids);
 
-  console.log("[retrieve] mongo returned:", mongoChunks.length, "of", ids.length, "ids");
-
   const byId = new Map(mongoChunks.map((c) => [c._id, c]));
 
   // 4. merge, preserving Pinecone's score order
