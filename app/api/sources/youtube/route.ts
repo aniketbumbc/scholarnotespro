@@ -44,15 +44,21 @@ export async function POST(req: NextRequest) {
       playlistId: parsed.playlistId, // shared "series" tag
     });
 
-    await ingestionQueue.add("ingest-youtube", {
+    await ingestionQueue.add("ingest-youtube-playlist", {
       sourceId,
       title: vTitle,
       filePath: "YouTube Playlist",
       videoId, // the only locator a YouTube job needs
+      playlistId: parsed.playlistId,
     });
 
-    sources.push({ sourceId, videoId, title: vTitle });
+    sources.push({ sourceId, videoId, title: vTitle, playlistId: parsed.playlistId });
   }
 
-  return NextResponse.json({ kind: "playlist", count: sources.length, sources });
+  return NextResponse.json({
+    kind: "playlist",
+    count: sources.length,
+    sources,
+    playlistId: parsed.playlistId,
+  });
 }

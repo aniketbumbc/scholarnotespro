@@ -16,12 +16,13 @@ type IngestionJobData = {
   title: string;
   filePath?: string;
   videoId?: string;
+  playlistId?: string;
 };
 
 const worker = new Worker(
-  "ingestion",
+  "ingestion", // only one job at a time
   async (job: Job<IngestionJobData>) => {
-    const { sourceId, title, filePath, videoId } = job.data;
+    const { sourceId, title, filePath, videoId, playlistId } = job.data;
 
     // STEP 1 — mark processing (DONE) flows upload → extract → chunk → store → embed → upsert → ready, with idempotent re-ingest
     await setSourceStatus(sourceId, "processing");
@@ -48,9 +49,10 @@ const worker = new Worker(
     } else if (videoId) {
       const segments = await fetchTranscriptSegments(videoId);
       if (segments.length === 0) {
+        await new Promise((r) => setTimeout(r, 2000)); // 2s breather between videos
         throw new Error("No transcript available for this video"); // -> marks failed
       }
-      chunks = chunkTranscript(segments, { sourceId, title, videoId });
+      chunks = chunkTranscript(segments, { sourceId, title, videoId, playlistId });
     } else {
       throw new Error("No source type provided. filePath: " + filePath + " videoId: " + videoId);
     }
@@ -78,7 +80,7 @@ const worker = new Worker(
     await setSourceStatus(sourceId, "ready");
     console.log(`[ingest] done ${sourceId}`);
   },
-  { connection }
+  { connection, concurrency: 1 }
 );
 
 worker.on("failed", async (job, err) => {

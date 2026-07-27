@@ -16,6 +16,7 @@ export type Chunk = {
   startSeconds: number;
   endSeconds: number;
   videoId: string;
+  playlistId?: string;
 };
 
 export async function chunkPages(

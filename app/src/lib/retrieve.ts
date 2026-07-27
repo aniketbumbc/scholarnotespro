@@ -20,20 +20,24 @@ export type RetrievedChunk = {
 
 export async function retrieve(
   question: string,
-  opts: { topK?: number; sourceIds?: string[] } = {}
+  opts: { topK?: number; sourceIds?: string[]; playlistId?: string } = {}
 ): Promise<RetrievedChunk[]> {
   // 1. embed the question into the SAME 1536-dim space
   const qVector = await embeddings.embedQuery(question);
 
   // 2. Pinecone similarity search, optionally scoped to specific sources
-  const filter = opts.sourceIds?.length ? { sourceId: { $in: opts.sourceIds } } : undefined;
+  let filter: any = undefined;
+  if (opts.playlistId) {
+    filter = { playlistId: opts.playlistId }; // whole series
+  } else if (opts.sourceIds?.length) {
+    filter = { sourceId: { $in: opts.sourceIds } }; // specific sources
+  }
   const res = await pineconeIndex.query({
     vector: qVector,
     topK: opts.topK ?? 8,
     includeMetadata: true,
     filter,
   });
-  console.log("res pinecone", res?.matches[0].metadata);
 
   // 3. fetch full text from Mongo (small-to-big: Pinecone finds, Mongo reads)
   const ids = res.matches.map((m) => m.id);

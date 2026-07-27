@@ -20,7 +20,12 @@ export async function upsertChunks(embedded: EmbeddedChunk[]) {
         : {}),
       // YouTube-only fields (added only when present)
       ...("startSeconds" in c && c.startSeconds !== undefined
-        ? { videoId: c.videoId, startSeconds: c.startSeconds, endSeconds: c.endSeconds }
+        ? {
+            videoId: c.videoId,
+            startSeconds: c.startSeconds,
+            endSeconds: c.endSeconds,
+            ...(c.playlistId ? { playlistId: c.playlistId } : {}),
+          }
         : {}),
     },
   }));

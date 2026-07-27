@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { question, sourceIds } = await req.json();
+  const { question, sourceIds, playlistId } = await req.json();
   if (!question?.trim()) return NextResponse.json({ error: "Question required" }, { status: 400 });
 
   const injection = await detectInjection(question);
@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
       break; // fall through to retrieve -> rerank -> generate
   }
 
-  const candidates = await retrieve(question, { topK: 10, sourceIds });
+  const candidates = await retrieve(question, { topK: 10, sourceIds, playlistId });
 
   if (candidates.length === 0)
     return NextResponse.json({

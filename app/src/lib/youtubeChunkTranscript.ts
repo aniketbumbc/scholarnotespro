@@ -12,11 +12,12 @@ export type YouTubeChunk = {
   endSeconds: number;
   text: string;
   snippet: string;
+  playlistId?: string;
 };
 
 export function chunkTranscript(
   segments: TranscriptSegment[],
-  meta: { sourceId: string; title: string; videoId: string },
+  meta: { sourceId: string; title: string; videoId: string; playlistId?: string },
   windowSeconds = 45 // merge ~45s of speech per chunk
 ): YouTubeChunk[] {
   const chunks: YouTubeChunk[] = [];
@@ -42,6 +43,7 @@ export function chunkTranscript(
       endSeconds: last.startSeconds + last.durationSeconds,
       text,
       snippet: text,
+      playlistId: meta.playlistId,
     });
     buffer = [];
   };

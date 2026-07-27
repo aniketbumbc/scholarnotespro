@@ -21,6 +21,9 @@ export function parseYouTubeUrl(raw: string): ParsedYouTube {
   const v = url.searchParams.get("v");
   if (v) return { kind: "video", videoId: v };
 
+  const playlistId = url.searchParams.get("list");
+  if (playlistId) return { kind: "playlist", playlistId };
+
   throw new Error("Unrecognized YouTube URL");
 }
 
@@ -74,5 +77,6 @@ export async function fetchVideoDetails(videoId: string) {
   const res = await fetch(finalUrl);
   if (!res.ok) throw new Error(`YouTube API ${res.status}`);
   const data = await res.json();
+  console.log(data);
   return data;
 }
