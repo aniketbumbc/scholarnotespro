@@ -5,17 +5,23 @@ export async function upsertChunks(embedded: EmbeddedChunk[]) {
   if (embedded.length === 0) return;
 
   const vectors = embedded.map((c) => ({
-    id: c.chunkId, // UUID — same key as the Mongo _id
-    values: c.embedding, // 1536-dim vector
+    id: c.chunkId,
+    values: c.embedding,
     metadata: {
+      // common fields (both types)
       sourceId: c.sourceId,
       sourceType: c.sourceType,
       title: c.title,
       chunkIndex: c.chunkIndex,
-      page: c.page,
-      charStart: c.charStart,
-      charEnd: c.charEnd,
-      snippet: c.snippet, // for highlight; text lives in Mongo
+      snippet: c.snippet,
+      // PDF-only fields (added only when present)
+      ...("page" in c && c.page !== undefined
+        ? { page: c.page, charStart: c.charStart, charEnd: c.charEnd }
+        : {}),
+      // YouTube-only fields (added only when present)
+      ...("startSeconds" in c && c.startSeconds !== undefined
+        ? { videoId: c.videoId, startSeconds: c.startSeconds, endSeconds: c.endSeconds }
+        : {}),
     },
   }));
 

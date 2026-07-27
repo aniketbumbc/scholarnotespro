@@ -12,6 +12,10 @@ export type RetrievedChunk = {
   snippet: string;
   text: string; // full text from Mongo
   sourceId: string;
+  videoId: string;
+  startSeconds: number;
+  endSeconds: number;
+  sourceType: string;
 };
 
 export async function retrieve(
@@ -29,6 +33,7 @@ export async function retrieve(
     includeMetadata: true,
     filter,
   });
+  console.log("res pinecone", res?.matches[0].metadata);
 
   // 3. fetch full text from Mongo (small-to-big: Pinecone finds, Mongo reads)
   const ids = res.matches.map((m) => m.id);
@@ -36,18 +41,21 @@ export async function retrieve(
 
   const byId = new Map(mongoChunks.map((c) => [c._id, c]));
 
-  // 4. merge, preserving Pinecone's score order
-  return res.matches.map((match) => {
+  const results = res.matches.map((match) => {
     const metadata = match.metadata as any;
-    const full = byId.get(match.id as any);
     return {
       chunkId: match.id,
       score: match.score ?? 0,
       title: metadata.title,
-      page: metadata.page,
+      page: metadata.sourceType === "youtube" ? 0 : metadata.page,
       snippet: metadata.snippet,
-      text: full?.text ?? metadata.snippet, // fall back to snippet if Mongo miss
+      text: byId.get(match.id as any)?.text ?? metadata.snippet, // fall back to snippet if Mongo miss
       sourceId: metadata.sourceId,
+      videoId: metadata.sourceType === "youtube" ? metadata.videoId : 0,
+      startSeconds: metadata.startSeconds,
+      endSeconds: metadata.endSeconds,
+      sourceType: metadata.sourceType,
     };
   });
+  return results;
 }

@@ -7,6 +7,9 @@ export type Citation = {
   title: string;
   page: number;
   snippet: string;
+  startSeconds?: number;
+  endSeconds?: number;
+  sourceType?: string;
 };
 
 export function verifyCitations(result: Answer, sent: RetrievedChunk[]) {
@@ -17,13 +20,23 @@ export function verifyCitations(result: Answer, sent: RetrievedChunk[]) {
 
   for (const chunkId of result.citedChunkIds) {
     const chunk = byId.get(chunkId);
-    if (chunk) {
+    if (chunk && chunk.sourceType !== "youtube") {
       validCitations.push({
         chunkId: chunk!.chunkId,
         sourceId: chunk!.sourceId,
         title: chunk!.title,
         page: chunk!.page,
         snippet: chunk!.snippet,
+      });
+    } else if (chunk && chunk.sourceType === "youtube") {
+      validCitations.push({
+        chunkId: chunk!.chunkId,
+        sourceId: chunk!.sourceId,
+        title: chunk!.title,
+        page: 0,
+        snippet: chunk!.snippet,
+        startSeconds: chunk!.startSeconds,
+        endSeconds: chunk!.endSeconds,
       });
     } else {
       fabricated.push(chunkId); // model cited an id we never sent = hallucinated

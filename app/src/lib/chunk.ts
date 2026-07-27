@@ -13,6 +13,9 @@ export type Chunk = {
   charEnd: number;
   text: string; // the chunk (what gets embedded)
   snippet: string; // verbatim text for find-and-highlight (== text for now)
+  startSeconds: number;
+  endSeconds: number;
+  videoId: string;
 };
 
 export async function chunkPages(
@@ -57,6 +60,9 @@ export async function chunkPages(
         charEnd,
         text,
         snippet: text, // same as text for now; refine later if needed
+        startSeconds: 0,
+        endSeconds: 0,
+        videoId: "",
       });
     }
   }

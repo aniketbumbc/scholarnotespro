@@ -4,10 +4,12 @@ import { connection } from "../config/redis";
 import { setSourceStatus } from "../models/source.model";
 import { pineconeIndex } from "../config/pinecone";
 import { extractPdfPages, PageText } from "../lib/pdfExtract";
-import { chunkPages } from "../lib/chunk";
+import { Chunk, chunkPages } from "../lib/chunk";
 import { deleteChunksBySource, saveChunks } from "../models/chunk";
 import { embedChunks } from "../lib/embed";
 import { upsertChunks } from "../lib/upsert";
+import { fetchTranscriptSegments } from "../lib/youtubeTranscript";
+import { chunkTranscript, YouTubeChunk } from "../lib/youtubeChunkTranscript";
 
 type IngestionJobData = {
   sourceId: string;
@@ -23,7 +25,6 @@ const worker = new Worker(
 
     // STEP 1 — mark processing (DONE) flows upload → extract → chunk → store → embed → upsert → ready, with idempotent re-ingest
     await setSourceStatus(sourceId, "processing");
-    console.log(`[ingest] processing ${sourceId} — ${title}`);
 
     // ******************************************************
 
@@ -38,26 +39,34 @@ const worker = new Worker(
 
     // ******************************************************
     let pages: PageText[] = [];
+    let chunks: Chunk[] | YouTubeChunk[] = [];
     // STEP 3 — extract PDF text with page numbers + char offsets
     if (filePath && !videoId) {
+      // STEP 4 — chunk: stamp page / charStart / charEnd / chunkIndex / UUID
       pages = await extractPdfPages(filePath);
+      chunks = await chunkPages(pages, { sourceId, title });
+    } else if (videoId) {
+      const segments = await fetchTranscriptSegments(videoId);
+      if (segments.length === 0) {
+        throw new Error("No transcript available for this video"); // -> marks failed
+      }
+      chunks = chunkTranscript(segments, { sourceId, title, videoId });
+    } else {
+      throw new Error("No source type provided. filePath: " + filePath + " videoId: " + videoId);
     }
 
     // ******************************************************
 
-    // STEP 4 — chunk: stamp page / charStart / charEnd / chunkIndex / UUID
-
-    const chunks = await chunkPages(pages, { sourceId, title });
     // ******************************************************
 
     // STEP 5 — write parent chunk text to Mongo doc store
-    await saveChunks(chunks);
+    await saveChunks(chunks as Chunk[]);
 
     // ******************************************************
 
     // STEP 6 — embed chunks (LangChain + OpenAI embeddings)
 
-    const embeddedChunks = await embedChunks(chunks);
+    const embeddedChunks = await embedChunks(chunks as Chunk[]);
 
     // ******************************************************
 

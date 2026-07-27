@@ -30,6 +30,7 @@ Rules:
    - answer = ""
    - citedChunkIds = []
 3. Do not guess or use outside knowledge.
+4. IMPORTANT: DO NOT SEND  SOURCE ID example like this "c670218a-3a1d-44c4-ae17-94b796764a1d".
 
 Context:
 ${context}
@@ -40,7 +41,7 @@ ${question}
 Return ONLY valid JSON in this format:
 {
   "foundInSources": true,
-  "answer": "...",
+  "answer": "... Text only, no source id or other information.",
   "citedChunkIds": ["chunk1"]
 }
 `;
