@@ -1,7 +1,10 @@
 import { getDb } from "../config/mongo";
 import type { Chunk } from "../lib/chunk";
+import type { YouTubeChunk } from "../lib/youtubeChunkTranscript";
 
-export async function saveChunks(chunks: Chunk[]) {
+export type StoredChunk = Chunk | YouTubeChunk;
+
+export async function saveChunks(chunks: StoredChunk[]) {
   if (chunks.length === 0) return;
 
   const docs = chunks.map((c) => ({
@@ -18,7 +21,7 @@ export async function saveChunks(chunks: Chunk[]) {
       ? { page: c.page, charStart: c.charStart, charEnd: c.charEnd }
       : {}),
     // YouTube-only
-    ...("startSeconds" in c && c.startSeconds !== undefined
+    ...(c.sourceType === "youtube"
       ? {
           videoId: c.videoId,
           startSeconds: c.startSeconds,
@@ -49,7 +52,7 @@ export async function getChunksByIds(chunkIds: string[]) {
 export async function getChunksBySource(sourceId: string) {
   const db = await getDb();
   return db
-    .collection<Chunk>("chunks")
+    .collection<StoredChunk>("chunks")
     .find({ sourceId })
     .sort({ chunkIndex: 1 }) // in document order — critical for coherent summary
     .toArray();

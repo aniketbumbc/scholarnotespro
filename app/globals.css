@@ -1,26 +1,60 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* --- your palette (light) --- */
+  --color-bg: #f3f2f2;
+  --color-surface: #eae9e9;
+  --color-text: #201f1d;
+  --color-divider: color-mix(in srgb, #201f1d 14%, transparent);
+
+  --color-accent: #6f52a8;
+  --color-accent-100: #f4f0fc;
+  --color-accent-200: #e3daf6;
+  --color-accent-300: #c9b7ea;
+  --color-accent-400: #a68fd8;
+  --color-accent-500: #8a6dc4;
+  --color-accent-600: #6f52a8;
+  --color-accent-700: #573d8a;
+  --color-accent-800: #3f2b66;
+  --color-accent-900: #2a1c45;
+
+  --snp-ok: #3d7049;   /* ready */
+  --snp-bad: #a8412a;  /* failed */
+
+  --radius: 8px;
+  --radius-sm: 5px;
+  --radius-md: 8px;
 }
 
+[data-theme="dark"] {
+  --color-bg: #1a1917;
+  --color-surface: #242220;
+  --color-text: #ece7e0;
+  --color-divider: color-mix(in srgb, #ece7e0 20%, transparent);
+}
+
+/* --- map to Tailwind v4 theme tokens (so `bg-background`, `text-primary` etc. work) --- */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-text);
+  --color-card: var(--color-surface);
+  --color-border: var(--color-divider);
+  --color-primary: var(--color-accent);
+  --color-primary-foreground: #ffffff;
+  --color-muted: var(--color-surface);
+  --color-ok: var(--snp-ok);
+  --color-bad: var(--snp-bad);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body), Georgia, serif;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading), Georgia, serif;
+  font-weight: 400;
 }

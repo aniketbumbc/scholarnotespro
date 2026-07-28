@@ -62,7 +62,7 @@ const worker = new Worker(
     // ******************************************************
 
     // STEP 5 — write parent chunk text to Mongo doc store
-    await saveChunks(chunks as Chunk[]);
+    await saveChunks(chunks);
 
     // ******************************************************
 
