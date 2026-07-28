@@ -21,3 +21,24 @@ export async function DELETE() {
     sourcesDeleted: sources.deletedCount,
   });
 }
+
+export async function GET() {
+  const sources = await (
+    await db()
+  )
+    .collection("sources")
+    .find({})
+    .sort({ createdAt: -1 })
+    .toArray();
+  return NextResponse.json(
+    sources.map((s) => ({
+      sourceId: s._id,
+      title: s.title,
+      sourceType: s.sourceType,
+      status: s.status,
+      playlistId: s.playlistId,
+      videoId: s.videoId,
+      error: s.error,
+    }))
+  );
+}

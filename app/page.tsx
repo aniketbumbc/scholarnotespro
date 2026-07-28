@@ -1,9 +1,21 @@
+'use client';
+import { useState } from 'react';
+import { AppShell } from './src/components/layout/app-shell';
+import { SourcesPanel } from './src/components/sources/sources-panel';
+import type { Source } from './src/lib/type';
+
 export default function Home() {
+  const [selected, setSelected] = useState<Source | null>(null);
+
   return (
-    <div className="p-8">
-      <h1 style={{ fontSize: 42 }}>Whole-document summary</h1>
-      <p style={{ fontFamily: 'var(--font-body)' }}>Body text in Lora.</p>
-      <span style={{ color: 'var(--color-accent-700)', border: '1px solid var(--color-accent)', borderRadius: 99, padding: '1px 7px', fontSize: 12 }}>p.4</span>
-    </div>
+    <AppShell
+      sources={<SourcesPanel selectedId={selected?.sourceId ?? null} onSelect={setSelected} />}
+      center={
+        <div className="flex items-center justify-center text-foreground/40">
+          {selected ? `Selected: ${selected.title}` : 'Select a source'}
+        </div>
+      }
+      viewer={<div className="flex items-center justify-center text-foreground/40">Viewer (Step 13)</div>}
+    />
   );
 }
