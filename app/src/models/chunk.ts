@@ -5,17 +5,27 @@ export async function saveChunks(chunks: Chunk[]) {
   if (chunks.length === 0) return;
 
   const docs = chunks.map((c) => ({
-    _id: c.chunkId as any, // chunkId IS the Mongo _id — same key Pinecone uses
+    _id: c.chunkId as any,
     sourceId: c.sourceId,
     sourceType: c.sourceType,
     title: c.title,
     chunkIndex: c.chunkIndex,
-    page: c.page,
-    charStart: c.charStart,
-    charEnd: c.charEnd,
     text: c.text,
     snippet: c.snippet,
     createdAt: new Date(),
+    // PDF-only
+    ...("page" in c && c.page !== undefined
+      ? { page: c.page, charStart: c.charStart, charEnd: c.charEnd }
+      : {}),
+    // YouTube-only
+    ...("startSeconds" in c && c.startSeconds !== undefined
+      ? {
+          videoId: c.videoId,
+          startSeconds: c.startSeconds,
+          endSeconds: c.endSeconds,
+          playlistId: c.playlistId,
+        }
+      : {}),
   }));
 
   const db = await getDb();
