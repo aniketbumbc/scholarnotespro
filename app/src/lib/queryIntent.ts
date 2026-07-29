@@ -26,16 +26,11 @@ export async function classifyIntent(question: string): Promise<QueryIntent> {
         content:
           "Classify a user input to a document Q&A assistant into ONE category:\n" +
           "- DOCUMENT_QUESTION: ANY question or request for information that could plausibly " +
-          "be answered from documents — even if vague or short " +
-          '(e.g. "any info about paris?", "what does it say about pricing?"). ' +
           "You do NOT know what the documents contain, so assume any information request is this.\n" +
           '- GREETING: greetings, thanks, or blank/meaningless input (hi, hello, "asdf").\n' +
-          "- INAPPROPRIATE: sexual, offensive, or abusive content.\n" +
+          "- INAPPROPRIATE: sexual, offensive, or abusive content, politics, religion, etc.\n" +
           "- SUMMARY_REQUEST: requests to summarize or overview an ENTIRE document " +
           '(e.g. "summarize this", "give me an overview", "all 10 days", "the whole itinerary", ' +
-          '"key points of the document"). Distinct from a question about one specific detail.\n' +
-          "- OFF_TOPIC: ONLY clearly non-informational requests unrelated to documents — " +
-          "jokes, creative writing, coding help, general chit-chat.\n" +
           "When in doubt, choose DOCUMENT_QUESTION, never OFF_TOPIC.\n" +
           'Reply ONLY as JSON: {"category":"...","reason":"..."}',
       },

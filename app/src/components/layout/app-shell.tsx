@@ -25,7 +25,7 @@ export function AppShell({
         </main>
 
         {/* right — viewer */}
-        <section className="grid min-h-0 border-l border-border bg-card/30">
+        <section className="min-h-0 overflow-hidden border-l border-border bg-card/30">
           {viewer}
         </section>
       </div>

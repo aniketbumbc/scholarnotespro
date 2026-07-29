@@ -37,7 +37,6 @@ export async function POST(req: NextRequest) {
   }
 
   const intent = await classifyIntent(question);
-
   switch (intent.category) {
     case "GREETING":
       return NextResponse.json({
@@ -51,13 +50,6 @@ export async function POST(req: NextRequest) {
         { error: "That request isn’t something I can help with." },
         { status: 400 }
       );
-
-    case "OFF_TOPIC":
-      return NextResponse.json({
-        answer:
-          "I can only answer questions about your uploaded documents. Try asking about their content.",
-        citations: [],
-      });
 
     case "SUMMARY_REQUEST": {
       // summary needs a target source. Require sourceIds for now.
@@ -102,7 +94,7 @@ export async function POST(req: NextRequest) {
   if (topScore < RELEVANCE_THRESHOLD) {
     // vector scores run lower than rerank — tune this
     return NextResponse.json({
-      answer: "I couldn't find this in your sources topScore is less than relevance threshold.",
+      answer: "I couldn't find this in your topic related to the question. I think it's off-topic.",
       citations: [],
     });
   }

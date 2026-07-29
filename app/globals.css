@@ -58,3 +58,16 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading), Georgia, serif;
   font-weight: 400;
 }
+
+/* PDF citation highlights (react-pdf text layer) */
+.react-pdf__Page__textContent mark.pdf-cite-mark {
+  background: color-mix(in srgb, var(--color-accent) 48%, transparent) !important;
+  color: transparent;
+  border-radius: 2px;
+  padding: 0 1px;
+  mix-blend-mode: multiply;
+}
+[data-theme="dark"] .react-pdf__Page__textContent mark.pdf-cite-mark {
+  mix-blend-mode: screen;
+  background: color-mix(in srgb, var(--color-accent-400) 55%, transparent) !important;
+}
