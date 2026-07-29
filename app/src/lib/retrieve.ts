@@ -34,7 +34,7 @@ export async function retrieve(
   }
   const res = await pineconeIndex.query({
     vector: qVector,
-    topK: opts.topK ?? 8,
+    topK: opts.topK ?? 10,
     includeMetadata: true,
     filter,
   });

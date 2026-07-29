@@ -85,3 +85,13 @@ export interface MindMapResult {
   sourceType: SourceType;
   root: MindMapNode;
 }
+export type ViewerTarget =
+  | { kind: "pdf"; sourceId: string; page: number; snippet?: string }
+  | { kind: "video"; videoId: string; startSeconds: number };
+export interface QueryResponse {
+  answer: string;
+  citations: Citation[];
+  followUps?: string[];
+  topScore?: number;
+  mode?: string;
+}

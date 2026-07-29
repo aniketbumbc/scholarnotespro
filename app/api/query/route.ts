@@ -110,6 +110,18 @@ export async function POST(req: NextRequest) {
   // 4. generate from the top 5
   const result = await generateAnswer(question, candidates);
 
+  const citations = candidates // the chunks you sent to the LLM
+    .map((c) => ({
+      chunkId: c.chunkId,
+      sourceId: c.sourceId,
+      title: c.title,
+      snippet: c.snippet,
+      ...(c.page !== undefined ? { page: c.page } : {}),
+      ...(c.startSeconds !== undefined
+        ? { videoId: c.videoId, startSeconds: c.startSeconds, endSeconds: c.endSeconds }
+        : {}),
+    }));
+
   // grounding gate: model says it's not in sources -> return fallback
   if (!result.foundInSources) {
     return NextResponse.json({
@@ -119,7 +131,7 @@ export async function POST(req: NextRequest) {
   }
 
   // citation verificationF
-  const { validCitations, trustworthy } = verifyCitations(result, candidates);
+  const { trustworthy } = verifyCitations(result, candidates);
 
   // strict: a factual answer with no valid citation is not trustworthy -> refuse
   if (!trustworthy) {
@@ -129,5 +141,10 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  return NextResponse.json({ answer: result.answer, citations: validCitations, topScore });
+  return NextResponse.json({
+    answer: result.answer,
+    citations,
+    topScore,
+    followUps: result.followUps,
+  });
 }

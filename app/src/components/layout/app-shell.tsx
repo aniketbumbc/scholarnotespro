@@ -20,7 +20,7 @@ export function AppShell({
         </aside>
 
         {/* center — chat / tabs */}
-        <main className="grid min-h-0 grid-rows-[auto_1fr]">
+        <main className="min-h-0 overflow-hidden">
           {center}
         </main>
 
