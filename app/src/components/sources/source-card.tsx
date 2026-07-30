@@ -32,9 +32,6 @@ export function SourceCard({
           {source.status === 'failed' ? (
             <div className="mt-1.5">
               <StatusBadge status="failed" />
-              {/* <p className="mt-1 text-[10.5px] leading-snug text-foreground/55">
-                {source.error ?? 'Ingestion failed.'}
-              </p> */}
             </div>
           ) : (
             <div className="mt-1.5 flex items-center gap-1.5">
@@ -48,7 +45,7 @@ export function SourceCard({
 
         <button
           onClick={(e) => { e.stopPropagation(); onDelete(source); }}
-          className="p-0.5 text-foreground/40 hover:text-accent-700"
+          className="p-0.5 text-foreground/40 hover:text-accent-700 cursor-pointer"
           aria-label="Delete source"
         >
           <Trash2 size={13} strokeWidth={1.5} />

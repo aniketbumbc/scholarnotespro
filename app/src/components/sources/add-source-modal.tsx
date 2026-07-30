@@ -44,7 +44,7 @@ export function AddSourceModal({
 
   return (
     <Dialog open={open} onOpenChange={(o) => (o ? onOpenChange(true) : close())}>
-      <DialogContent className="sm:max-w-[520px] p-6 bg-background/90">
+      <DialogContent className="sm:max-w-[520px] p-6 bg-background">
         <div className="font-heading text-[26px] leading-none">Add a source</div>
         <p className="mt-2 text-[13px] leading-relaxed text-foreground/55">
           PDFs are parsed page by page; YouTube links are transcribed. Playlists arrive as a series.

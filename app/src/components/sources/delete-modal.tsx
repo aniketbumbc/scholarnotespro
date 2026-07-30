@@ -40,8 +40,7 @@ export function DeleteModal({
           <button
             onClick={run}
             disabled={busy}
-            className="flex items-center gap-1.5 rounded-md px-4 py-2 text-sm text-white disabled:opacity-60"
-            style={{ background: 'var(--snp-bad)' }}
+            className="flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-accent-700 disabled:opacity-60"
           >
             {busy ? <><Loader2 size={14} className="animate-spin" /> Deleting…</> : 'Delete'}
           </button>
