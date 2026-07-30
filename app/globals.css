@@ -72,3 +72,28 @@ h1, h2, h3, h4, h5, h6 {
   mix-blend-mode: screen;
   background: color-mix(in srgb, var(--color-accent-400) 55%, transparent) !important;
 }
+/* the fill level rises and falls */
+@keyframes water-rise {
+  0%, 100% { height: 25%; }
+  50%      { height: 80%; }
+}
+
+/* the wavy surface slides horizontally (the "ripple") */
+@keyframes water-wave {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@theme inline {
+  --animate-water-rise: water-rise 2.4s ease-in-out infinite;
+  --animate-water-wave: water-wave 1.2s linear infinite;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+@keyframes fill {
+  0%, 100% { height: 20%; }
+  50%      { height: 85%; }
+}
