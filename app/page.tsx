@@ -7,6 +7,7 @@ import { ViewerPanel } from './src/components/viewer/viewer-panel';
 import { api } from './src/lib/api';
 import type { Source, ViewerTarget } from './src/lib/type';
 import { Tab, TabBar } from './src/components/chat/center/tab-bar';
+import { SummaryTab } from './src/components/center/summary-tab';
 
 export default function Home() {
   const [selected, setSelected] = useState<Source | null>(null);
@@ -53,7 +54,7 @@ export default function Home() {
           <TabBar tab={tab} onTab={setTab} sourceLabel={selected?.title} />
           <div className="min-h-0 overflow-hidden">
             {tab === 'chat' && <ChatPanel sources={sources} onCite={onCite} />}
-            {tab === 'summary' && <div className="p-8 text-foreground/40">Summary (Step 8)</div>}
+            {tab === 'summary' && <SummaryTab source={selected} />}
             {/* other tabs → Steps 8–12 */}
           </div>
         </div>
@@ -66,6 +67,7 @@ export default function Home() {
           pdfTitle={pdfTitle}
         />
       }
+      
     />
   );
 }

@@ -28,8 +28,6 @@ export const api = {
   // query + generation
   query: (body: QueryRequest) =>
     req<QueryResponse>("/api/query", { method: "POST", body: JSON.stringify(body) }),
-  summary: (sourceId: string) =>
-    req<SummaryResult>("/api/summary", { method: "POST", body: JSON.stringify({ sourceId }) }),
   timeline: (sourceId: string) =>
     req<TimelineResult>("/api/youtube-timeline", {
       method: "POST",

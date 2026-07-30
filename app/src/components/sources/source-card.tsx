@@ -22,7 +22,7 @@ export function SourceCard({
       onClick={() => ready && onSelect(source)}
       className={`rounded-md border bg-background p-3 transition-colors ${
         ready ? 'cursor-pointer hover:border-accent-400' : 'cursor-not-allowed opacity-60'
-      } ${selected ? 'border-accent bg-accent-100/40' : 'border-border'}`}
+      } ${selected ? 'border-accent bg-purple-200/40' : 'border-border'}`}
     >
       <div className="flex items-start gap-2.5">
         <Icon size={15} strokeWidth={1.5} className="mt-0.5 shrink-0" style={{ color: 'var(--color-accent-700)' }} />

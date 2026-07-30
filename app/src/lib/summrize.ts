@@ -4,6 +4,7 @@ import { getChunksBySource } from "../models/chunk";
 const openai = new OpenAI();
 
 export type SummaryResult = {
+  id: string;
   summary: string;
   sourceId: string;
   title: string;
@@ -27,10 +28,15 @@ export async function summarizeSource(sourceId: string): Promise<SummaryResult |
       {
         role: "system",
         content:
-          "You summarize a document for a user. Produce a clear, well-structured " +
-          "summary covering all major sections. Use only the provided content — " +
-          "do not add outside information. If the document has a day-by-day or " +
-          "sequential structure, preserve that order in your summary.",
+          "You summarize a document for a user. Produce clear Markdown only.\n" +
+          "Structure rules:\n" +
+          "- Start with a short title heading (## Title).\n" +
+          "- Use #### for episode/section headings, each on its own line.\n" +
+          "- Under each section, use a bullet list: one `- **Term**: explanation` per line.\n" +
+          "- Put a blank line before each heading.\n" +
+          "- Never put multiple bullets or headings on the same line.\n" +
+          "- Cover all major sections. Use only the provided content — do not add outside information.\n" +
+          "- If the document has a day-by-day or sequential structure, preserve that order.",
       },
       {
         role: "user",
@@ -40,6 +46,7 @@ export async function summarizeSource(sourceId: string): Promise<SummaryResult |
   });
 
   return {
+    id: sourceId,
     summary: res.choices[0].message.content ?? "",
     sourceId,
     title,

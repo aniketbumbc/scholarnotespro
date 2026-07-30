@@ -95,3 +95,10 @@ export interface QueryResponse {
   topScore?: number;
   mode?: string;
 }
+
+export interface SummaryResponse {
+  answer: string;
+  citations: { sourceId: string; title: string }[];
+  mode: string;
+  id: string;
+}
