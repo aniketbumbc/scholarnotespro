@@ -10,6 +10,7 @@ import { Tab, TabBar } from './src/components/center/tab-bar';
 import { SummaryTab } from './src/components/center/summary-tab';
 import { TimelineTab } from './src/components/center/timeline-tab';
 import { StudyGuideTab } from './src/components/center/study-guide-tab';
+import { MindMapTab } from './src/components/center/mindmap-tab';
 
 export default function Home() {
   const [selected, setSelected] = useState<Source | null>(null);
@@ -86,6 +87,7 @@ export default function Home() {
             {tab === 'summary' && <SummaryTab source={selected} />}
             {tab === 'timeline' && <TimelineTab source={selected} onSeek={onCite} />}
             {tab === 'guide' && <StudyGuideTab source={selected} />}
+            {tab === 'map' && <MindMapTab source={selected} onNodeClick={onCite} />}
             {/* other tabs → Steps 8–12 */}
           </div>
         </div>

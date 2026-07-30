@@ -102,3 +102,20 @@ export interface SummaryResponse {
   mode: string;
   id: string;
 }
+
+export interface MindMapNode {
+  title: string;
+  startSeconds?: number; // YouTube: seek target
+  deepLink?: string; // YouTube: watch URL
+  page?: number; // PDF: jump target
+  snippet?: string; // PDF: text to highlight
+  children: MindMapNode[];
+}
+
+export interface MindMapResult {
+  sourceId: string;
+  title: string;
+  sourceType: "pdf" | "youtube";
+  videoId?: string; // present for YouTube — needed to build seek targets
+  root: MindMapNode;
+}
