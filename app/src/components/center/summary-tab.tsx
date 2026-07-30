@@ -70,7 +70,7 @@ export function SummaryTab({ source }: { source: Source | null }) {
       <div className="shrink-0 border-b border-border px-8 py-4">
         <div className="mx-auto flex max-w-[760px] items-baseline justify-between gap-4">
           <div className="min-w-0">
-            <h2 className="font-heading text-[27px]">Whole-document summary</h2>
+            <h2 className="font-heading text-[27px]">Summary</h2>
             <p className="mt-0.5 truncate text-[12px] text-foreground/45">{source.title}</p>
           </div>
           <button

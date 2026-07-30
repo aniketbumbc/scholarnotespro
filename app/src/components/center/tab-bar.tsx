@@ -17,7 +17,7 @@ export function TabBar({ tab, onTab, sourceLabel }: { tab: Tab; onTab: (t: Tab) 
         <button
           key={t.id}
           onClick={() => onTab(t.id)}
-          className="border-b-2 py-3 text-[13px] transition-colors"
+          className="border-b-2 py-3 text-[13px] transition-colors cursor-pointer"
           style={{
             borderColor: tab === t.id ? 'var(--color-accent)' : 'transparent',
             color: tab === t.id ? 'var(--color-accent-700)' : 'var(--color-text)',
