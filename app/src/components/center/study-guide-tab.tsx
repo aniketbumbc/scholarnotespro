@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { RefreshCw, ChevronDown } from 'lucide-react';
 import { api } from '../../lib/api';
 import type { Source, StudyGuideResult } from '../../lib/type';
+import { TabGenerationLoader } from './tab-generation-loader';
 
 export function StudyGuideTab({ source }: { source: Source | null }) {
   const [guide, setGuide] = useState<StudyGuideResult | null>(null);
@@ -65,12 +66,7 @@ export function StudyGuideTab({ source }: { source: Source | null }) {
       <div className="min-h-0 flex-1 overflow-y-auto px-8 py-6">
         <div className="mx-auto max-w-[760px]">
           {loading ? (
-            <div className="flex flex-col gap-3 py-3">
-              <span className="h-4 w-1/3 animate-pulse rounded bg-accent-300/40" />
-              <span className="h-3 w-full animate-pulse rounded bg-accent-300/30" />
-              <span className="h-3 w-[88%] animate-pulse rounded bg-accent-300/30" />
-              <span className="mt-1 text-[11.5px] text-foreground/45">Building the study guide…</span>
-            </div>
+            <TabGenerationLoader title={source.title} label="Study guide generation" />
           ) : error ? (
             <p className="text-[13px]" style={{ color: 'var(--snp-bad)' }}>{error}</p>
           ) : guide ? (

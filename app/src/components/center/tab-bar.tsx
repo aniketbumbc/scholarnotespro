@@ -5,9 +5,8 @@ const TABS: { id: Tab; label: string }[] = [
   { id: 'chat', label: 'Chat' },
   { id: 'summary', label: 'Summary' },
   { id: 'timeline', label: 'Timeline' },
-  { id: 'guide', label: 'Study guide' },
-  { id: 'map', label: 'Mind map' },
-  { id: 'faq', label: 'FAQ' },
+  { id: 'guide', label: 'Study Guide' },
+  { id: 'map', label: 'Mind Map' },
 ];
 
 export function TabBar({ tab, onTab, sourceLabel }: { tab: Tab; onTab: (t: Tab) => void; sourceLabel?: string }) {

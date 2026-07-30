@@ -6,6 +6,7 @@ import { api } from '../../lib/api';
 import { treeToFlow } from '../../lib/mindMapLayout';
 import type { Source, MindMapResult, ViewerTarget } from '../../lib/type';
 import { Handle, Position } from '@xyflow/react';
+import { TabGenerationLoader } from './tab-generation-loader';
 
 export function MindMapTab({
   source,
@@ -62,7 +63,11 @@ export function MindMapTab({
 
       <div className="min-h-0 flex-1">
         {loading ? (
-          <Centered>Building the mind map…</Centered>
+          <div className="px-8 py-6">
+            <div className="mx-auto max-w-[760px]">
+              <TabGenerationLoader title={source.title} label="Mind map generation" />
+            </div>
+          </div>
         ) : error ? (
           <Centered><span style={{ color: 'var(--snp-bad)' }}>{error}</span></Centered>
         ) : (

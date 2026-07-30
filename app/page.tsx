@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { AppShell } from './src/components/layout/app-shell';
 import { SourcesPanel } from './src/components/sources/sources-panel';
 import { ChatPanel } from './src/components/chat/chat-panel';
+import { SwitchSourceModal } from './src/components/chat/switch-source-modal';
 import { ViewerPanel } from './src/components/viewer/viewer-panel';
 import { api } from './src/lib/api';
 import type { Source, ViewerTarget } from './src/lib/type';
@@ -18,6 +19,8 @@ export default function Home() {
   const [viewerTarget, setViewerTarget] = useState<ViewerTarget | null>(null);
   const [seekKey, setSeekKey] = useState(0);
   const [tab, setTab] = useState<Tab>('chat');
+  const [chatHasMessages, setChatHasMessages] = useState(false);
+  const [pendingSource, setPendingSource] = useState<Source | null>(null);
 
   const load = useCallback(() => {
     api.listSources().then(setSources).catch(() => {});
@@ -50,6 +53,14 @@ export default function Home() {
     }
   }, []);
 
+  const applySource = useCallback(
+    (s: Source | null) => {
+      setSelected(s);
+      if (tab === 'summary' || tab === 'guide') loadIntoViewer(s);
+    },
+    [tab, loadIntoViewer]
+  );
+
   const onTab = useCallback(
     (t: Tab) => {
       setTab(t);
@@ -59,12 +70,28 @@ export default function Home() {
   );
 
   const onSelectSource = useCallback(
-    (s: Source | null) => {
-      setSelected(s);
-      if (tab === 'summary' || tab === 'guide') loadIntoViewer(s);
+    (s: Source) => {
+      if (s.sourceId === selected?.sourceId) return;
+
+      if (tab === 'chat' && chatHasMessages) {
+        setPendingSource(s);
+        return;
+      }
+
+      applySource(s);
     },
-    [tab, loadIntoViewer]
+    [tab, chatHasMessages, selected?.sourceId, applySource]
   );
+
+  const confirmSwitch = useCallback(() => {
+    if (!pendingSource) return;
+    applySource(pendingSource);
+    setPendingSource(null);
+  }, [pendingSource, applySource]);
+
+  const cancelSwitch = useCallback(() => {
+    setPendingSource(null);
+  }, []);
 
   const videoTitle =
     viewerTarget?.kind === 'video'
@@ -77,30 +104,42 @@ export default function Home() {
       : undefined;
 
   return (
-    <AppShell
-      sources={<SourcesPanel selectedId={selected?.sourceId ?? null} onSelect={onSelectSource} />}
-      center={
-        <div className="grid h-full min-h-0 grid-rows-[auto_1fr]">
-          <TabBar tab={tab} onTab={onTab} sourceLabel={selected?.title} />
-          <div className="min-h-0 overflow-hidden">
-            {tab === 'chat' && <ChatPanel sources={sources} onCite={onCite} />}
-            {tab === 'summary' && <SummaryTab source={selected} />}
-            {tab === 'timeline' && <TimelineTab source={selected} onSeek={onCite} />}
-            {tab === 'guide' && <StudyGuideTab source={selected} />}
-            {tab === 'map' && <MindMapTab source={selected} onNodeClick={onCite} />}
-            {/* other tabs → Steps 8–12 */}
+    <>
+      <AppShell
+        sources={<SourcesPanel selectedId={selected?.sourceId ?? null} onSelect={onSelectSource} />}
+        center={
+          <div className="grid h-full min-h-0 grid-rows-[auto_1fr]">
+            <TabBar tab={tab} onTab={onTab} sourceLabel={selected?.title} />
+            <div className="min-h-0 overflow-hidden">
+              {tab === 'chat' && (
+                <ChatPanel
+                  source={selected}
+                  onCite={onCite}
+                  onHasMessagesChange={setChatHasMessages}
+                />
+              )}
+              {tab === 'summary' && <SummaryTab source={selected} />}
+              {tab === 'timeline' && <TimelineTab source={selected} onSeek={onCite} />}
+              {tab === 'guide' && <StudyGuideTab source={selected} />}
+              {tab === 'map' && <MindMapTab source={selected} onNodeClick={onCite} />}
+            </div>
           </div>
-        </div>
-      }
-      viewer={
-        <ViewerPanel
-          target={viewerTarget}
-          seekKey={seekKey}
-          videoTitle={videoTitle}
-          pdfTitle={pdfTitle}
-        />
-      }
-      
-    />
+        }
+        viewer={
+          <ViewerPanel
+            target={viewerTarget}
+            seekKey={seekKey}
+            videoTitle={videoTitle}
+            pdfTitle={pdfTitle}
+          />
+        }
+      />
+      <SwitchSourceModal
+        pending={pendingSource}
+        currentTitle={selected?.title}
+        onConfirm={confirmSwitch}
+        onCancel={cancelSwitch}
+      />
+    </>
   );
 }

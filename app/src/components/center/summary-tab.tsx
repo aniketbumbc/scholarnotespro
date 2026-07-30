@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import { RefreshCw } from 'lucide-react';
 import { api } from '../../lib/api';
 import type { Source } from '../../lib/type';
+import { TabGenerationLoader } from './tab-generation-loader';
 
 /** Fix common LLM markdown that collapses lists/headings onto one line. */
 function normalizeSummaryMarkdown(md: string): string {
@@ -86,13 +87,7 @@ export function SummaryTab({ source }: { source: Source | null }) {
       <div className="min-h-0 flex-1 overflow-y-auto px-8 py-6">
         <div className="mx-auto max-w-[760px]">
           {loading ? (
-            <div className="flex flex-col gap-2.5 py-3">
-              <span className="h-3 w-full animate-pulse rounded bg-accent-300/40" />
-              <span className="h-3 w-[92%] animate-pulse rounded bg-accent-300/40" />
-              <span className="h-3 w-[78%] animate-pulse rounded bg-accent-300/40" />
-              <span className="h-3 w-[85%] animate-pulse rounded bg-accent-300/40" />
-              <span className="mt-1 text-[11.5px] text-foreground/45">Reading “{source.title}”…</span>
-            </div>
+            <TabGenerationLoader title={source.title} label="Summary generation" />
           ) : error ? (
             <p className="text-[13px]" style={{ color: 'var(--snp-bad)' }}>
               {error}

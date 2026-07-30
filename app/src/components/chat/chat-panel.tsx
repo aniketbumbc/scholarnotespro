@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Loader2, FileText, Play } from 'lucide-react';
 import { api } from '../../lib/api';
 import type { Citation, QueryResponse, Source, ViewerTarget } from '../../lib/type';
@@ -9,33 +9,45 @@ type Msg =
   | { role: 'assistant'; answer: string; citations: Citation[]; followUps?: string[]; notFound?: boolean };
 
 export function ChatPanel({
-  sources,
+  source,
   onCite,
+  onHasMessagesChange,
 }: {
-  sources: Source[];
+  source: Source | null;
   onCite: (t: ViewerTarget) => void;
+  onHasMessagesChange?: (hasMessages: boolean) => void;
 }) {
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState('');
-  const [scope, setScope] = useState('all');
   const [busy, setBusy] = useState(false);
 
-  const readySources = sources.filter((s) => s.status === 'ready');
+  const ready = source?.status === 'ready';
+
+  useEffect(() => {
+    setMessages([]);
+    setInput('');
+  }, [source?.sourceId]);
+
+  useEffect(() => {
+    onHasMessagesChange?.(messages.length > 0);
+  }, [messages.length, onHasMessagesChange]);
+
+  useEffect(() => {
+    return () => onHasMessagesChange?.(false);
+  }, [onHasMessagesChange]);
 
   const ask = async (question?: string) => {
     const q = (question ?? input).trim();
-    if (!q || busy) return;
+    if (!q || busy || !source || !ready) return;
     setInput('');
     setMessages((m) => [...m, { role: 'user', text: q }]);
     setBusy(true);
 
     try {
-      const body: any = { question: q };
-      if (scope !== 'all') {
-        if (scope.startsWith('pl:')) body.playlistId = scope.slice(3);
-        else body.sourceIds = [scope];
-      }
-      const res: QueryResponse = await api.query(body);
+      const res: QueryResponse = await api.query({
+        question: q,
+        sourceIds: [source.sourceId],
+      });
       const notFound = res.citations.length === 0 && /couldn't find/i.test(res.answer);
       setMessages((m) => [
         ...m,
@@ -56,6 +68,13 @@ export function ChatPanel({
 
   const askFollowUp = (q: string) => { setInput(q); setTimeout(ask, 0); };
 
+  const canAsk = !!source && ready && !busy;
+
+  const statusNote = !source
+    ? 'Select a source from the left panel to start chatting.'
+    : !ready
+      ? `“${source.title}” is still processing.`
+      : null;
 
   return (
     <div className="grid h-full min-h-0 grid-rows-[1fr_auto]">
@@ -98,32 +117,18 @@ export function ChatPanel({
       {/* ───── composer ───── */}
       <div className="border-t border-border bg-background px-8 py-3">
         <div className="mx-auto max-w-[760px]">
-          <div className="mb-2 flex items-center gap-2">
-            <span className="text-[11px] text-foreground/45">Ask across</span>
-            <select
-              value={scope}
-              onChange={(e) => setScope(e.target.value)}
-              className="rounded-md border border-border bg-background px-2 py-1 text-xs"
-            >
-              <option value="all">All ready sources</option>
-              {readySources
-                .filter((s) => !s.playlistId)
-                .map((s) => (
-                  <option key={s.sourceId} value={s.sourceId}>
-                    {s.title}
-                  </option>
-                ))}
-              {[...new Set(readySources.filter((s) => s.playlistId).map((s) => s.playlistId))].map((pid) => (
-                <option key={pid} value={`pl:${pid}`}>
-                  Series
-                </option>
-              ))}
-            </select>
-            <span className="flex-1" />
-            <span className="text-[11px] text-foreground/38">
-              {readySources.length} of {sources.length} queryable · citations open in the viewer →
-            </span>
-          </div>
+          {statusNote ? (
+            <div className="mb-2 text-[12px] text-foreground/55">{statusNote}</div>
+          ) : (
+            <div className="mb-2 flex items-center gap-2">
+              <span className="text-[11px] text-foreground/45">Asking about</span>
+              <span className="truncate text-[11px] text-foreground/68">{source!.title}</span>
+              <span className="flex-1" />
+              <span className="text-[11px] text-foreground/38">
+                citations open in the viewer →
+              </span>
+            </div>
+          )}
           <div className="flex items-end gap-2">
             <textarea
               value={input}
@@ -134,13 +139,20 @@ export function ChatPanel({
                   ask();
                 }
               }}
-              placeholder="Ask a question about your sources…"
+              placeholder={
+                !source
+                  ? 'Select a source to ask a question…'
+                  : !ready
+                    ? 'Waiting for this source to finish processing…'
+                    : 'Ask a question about this source…'
+              }
               rows={2}
-              className="flex-1 resize-none rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+              disabled={!source || !ready}
+              className="flex-1 resize-none rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:border-accent disabled:opacity-60"
             />
             <button
               onClick={() => ask()}
-              disabled={busy}
+              disabled={!canAsk || !input.trim()}
               className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-accent-700 disabled:opacity-60"
             >
               Ask

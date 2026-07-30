@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { RefreshCw, Play } from 'lucide-react';
 import { api } from '../../lib/api';
 import type { Source, TimelineChapter, ViewerTarget } from '../../lib/type';
+import { TabGenerationLoader } from './tab-generation-loader';
 
 export function TimelineTab({
   source,
@@ -83,12 +84,7 @@ export function TimelineTab({
       <div className="min-h-0 flex-1 overflow-y-auto px-8 py-6">
         <div className="mx-auto max-w-[760px]">
           {loading ? (
-            <div className="flex flex-col gap-2 py-3">
-              {[0, 1, 2, 3].map((i) => (
-                <span key={i} className="h-12 w-full animate-pulse rounded-md bg-accent-300/30" />
-              ))}
-              <span className="mt-1 text-[11.5px] text-foreground/45">Reading the transcript…</span>
-            </div>
+            <TabGenerationLoader title={source.title} label="Timeline generation" />
           ) : error ? (
             <p className="text-[13px]" style={{ color: 'var(--snp-bad)' }}>{error}</p>
           ) : (
