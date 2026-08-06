@@ -27,7 +27,7 @@ export function SourceCard({
       <div className="flex items-start gap-2.5">
         <Icon size={15} strokeWidth={1.5} className="mt-0.5 shrink-0" style={{ color: 'var(--color-accent-700)' }} />
         <div className="min-w-0 flex-1">
-          <div className="font-heading text-[15px] font-semibold leading-tight">{source.title}</div>
+          <div className="font-heading text-[15px] font-semibold leading-tight break-words">{source.title}</div>
 
           {source.status === 'failed' ? (
             <div className="mt-1.5">
