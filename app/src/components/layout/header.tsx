@@ -1,6 +1,9 @@
 import { ThemeToggle } from '../themeToggle';
+import { AuthUser } from '../auth/auth-gate';
 
-export function Header() {
+
+export function Header({ userEmail, onLogout }: { userEmail: string; onLogout: () => void })
+ {
   return (
     <header className="flex h-[54px] min-w-[1180px] items-center gap-4 border-b border-border bg-background px-4">
       <div className="flex items-baseline gap-2">
@@ -9,14 +12,23 @@ export function Header() {
           Notes desk
         </span>
       </div>
-
-
-     
+    
       <div className="flex-1" />
-
       <div className="flex items-center gap-2">
         {/* <span className="text-xs tabular-nums text-foreground/50">6 sources · 4 ready</span> */}
-        <ThemeToggle />
+
+<div className="flex items-center gap-3">
+  <span className="text-xs tabular-nums text-foreground/50">6 sources · 4 ready</span>
+  <ThemeToggle />
+  <div className="h-[22px] w-px bg-border" />   {/* divider */}
+  <span className="text-xs text-foreground/55">{userEmail}</span>
+  <button
+    onClick={onLogout}
+    className="rounded-md border border-border px-2.5 py-1 text-xs hover:bg-card"
+  >
+    Log out
+  </button>
+</div>
       </div>
     </header>
   );

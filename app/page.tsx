@@ -12,8 +12,23 @@ import { SummaryTab } from './src/components/center/summary-tab';
 import { TimelineTab } from './src/components/center/timeline-tab';
 import { StudyGuideTab } from './src/components/center/study-guide-tab';
 import { MindMapTab } from './src/components/center/mindmap-tab';
+import { AuthGate } from './src/components/auth/auth-gate';
 
 export default function Home() {
+  return (
+    <AuthGate>
+      {(user) => <AppContent user={user} />}
+    </AuthGate>
+  );
+ 
+}
+
+
+function AppContent({ user }: { user: { id: string; email: string; name?: string } }) {
+ 
+
+
+
   const [selected, setSelected] = useState<Source | null>(null);
   const [sources, setSources] = useState<Source[]>([]);
   const [viewerTarget, setViewerTarget] = useState<ViewerTarget | null>(null);
@@ -103,9 +118,17 @@ export default function Home() {
       ? sources.find((s) => s.sourceId === viewerTarget.sourceId)?.title
       : undefined;
 
+
+  const logout = async () => {
+        await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+        window.location.href = '/login';
+      };
+
   return (
     <>
       <AppShell
+       userEmail={user.email}
+       onLogout={logout}
         sources={<SourcesPanel selectedId={selected?.sourceId ?? null} onSelect={onSelectSource} />}
         center={
           <div className="grid h-full min-h-0 grid-rows-[auto_1fr]">

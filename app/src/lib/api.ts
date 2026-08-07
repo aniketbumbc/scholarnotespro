@@ -3,8 +3,16 @@ const BASE = ""; // same-origin (Next API routes)
 async function req<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
     ...init,
+    credentials: "include",
     headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) },
   });
+  if (res.status === 401) {
+    // redirect to login page
+    if (typeof window !== "undefined") {
+      window.location.href = "/login";
+    }
+    throw new Error("Not authenticated");
+  }
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
     throw new Error(body.error ?? `Request failed: ${res.status}`);
