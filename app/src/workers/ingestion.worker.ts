@@ -10,12 +10,13 @@ import { embedChunks } from "../lib/embed";
 import { upsertChunks } from "../lib/upsert";
 import { fetchTranscriptSegments } from "../lib/youtubeTranscript";
 import { chunkTranscript, YouTubeChunk } from "../lib/youtubeChunkTranscript";
+import { downloadPdf } from "../lib/storage";
 
 type IngestionJobData = {
   userId: string;
   sourceId: string;
   title: string;
-  filePath?: string;
+  storagePath?: string;
   videoId?: string;
   playlistId?: string;
 };
@@ -23,7 +24,7 @@ type IngestionJobData = {
 const worker = new Worker(
   "ingestion", // only one job at a time
   async (job: Job<IngestionJobData>) => {
-    const { userId, sourceId, title, filePath, videoId, playlistId } = job.data;
+    const { userId, sourceId, title, storagePath, videoId, playlistId } = job.data;
 
     // STEP 1 — mark processing (DONE) flows upload → extract → chunk → store → embed → upsert → ready, with idempotent re-ingest
     await setSourceStatus(sourceId, "processing");
@@ -43,9 +44,10 @@ const worker = new Worker(
     let pages: PageText[] = [];
     let chunks: Chunk[] | YouTubeChunk[] = [];
     // STEP 3 — extract PDF text with page numbers + char offsets
-    if (filePath && !videoId) {
+    if (storagePath && !videoId) {
       // STEP 4 — chunk: stamp page / charStart / charEnd / chunkIndex / UUID
-      pages = await extractPdfPages(filePath);
+      const buffer = await downloadPdf(storagePath);
+      pages = await extractPdfPages(buffer);
       chunks = await chunkPages(pages, { sourceId, title, userId });
     } else if (videoId) {
       const segments = await fetchTranscriptSegments(videoId);
@@ -55,7 +57,9 @@ const worker = new Worker(
       }
       chunks = chunkTranscript(segments, { sourceId, title, videoId, playlistId, userId });
     } else {
-      throw new Error("No source type provided. filePath: " + filePath + " videoId: " + videoId);
+      throw new Error(
+        "No source type provided. storagePath: " + storagePath + " videoId: " + videoId
+      );
     }
 
     // ******************************************************

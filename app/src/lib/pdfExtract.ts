@@ -8,8 +8,7 @@ export type PageText = {
   charEnd: number; // offset just past this page's last char
 };
 
-export async function extractPdfPages(filePath: string): Promise<PageText[]> {
-  const buffer = await readFile(filePath);
+export async function extractPdfPages(buffer: Buffer): Promise<PageText[]> {
   const parser = new PDFParse({ data: buffer });
 
   try {

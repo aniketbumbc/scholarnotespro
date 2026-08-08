@@ -1,6 +1,8 @@
 import { randomUUID } from "crypto";
 import { getDb as db } from "../config/mongo";
 import { pineconeIndex } from "../config/pinecone";
+import { deletePdf } from "../lib/storage";
+import { getUserId } from "../lib/auth";
 
 export type SourceStatus = "queued" | "processing" | "ready" | "failed";
 export async function createSource(input: {
@@ -35,6 +37,15 @@ export async function setSourceStatus(
 }
 
 export async function deleteSource(sourceId: string) {
+  const userId = await getUserId();
+  if (!userId) return { error: "Not authenticated" };
+  const src = await getOwnedSource(sourceId, userId);
+  if (!src) return { error: "Source not found" };
+
+  if (src?.sourceType === "pdf" && src.storagePath) {
+    await deletePdf(src.storagePath); // ← clean up the file
+  }
+
   // 1. Pinecone vectors — delete by metadata filter
   try {
     await pineconeIndex.deleteMany({ sourceId });
@@ -71,4 +82,11 @@ export async function getOwnedSource(sourceId: string, userId: string) {
   if (!src) return null;
   if (src.userId !== userId) return null; // exists but not yours → treat as not found
   return src;
+}
+
+export async function updateSourceStoragePath(sourceId: string, storagePath: string) {
+  const database = await db();
+  await database
+    .collection("sources")
+    .updateOne({ _id: sourceId as any }, { $set: { storagePath } });
 }
