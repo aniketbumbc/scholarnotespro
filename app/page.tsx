@@ -129,6 +129,7 @@ function AppContent({ user }: { user: { id: string; email: string; name?: string
       <AppShell
        userEmail={user.email}
        onLogout={logout}
+       sourceStats={{ total: sources.length, ready: sources.filter((s) => s.status === 'ready').length }}
         sources={<SourcesPanel selectedId={selected?.sourceId ?? null} onSelect={onSelectSource} />}
         center={
           <div className="grid h-full min-h-0 grid-rows-[auto_1fr]">

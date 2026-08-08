@@ -60,6 +60,10 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 400;
 }
 
+button:not(:disabled) {
+  cursor: pointer;
+}
+
 /* PDF citation highlights (react-pdf text layer) */
 .react-pdf__Page__textContent mark.pdf-cite-mark {
   background: color-mix(in srgb, var(--color-accent) 48%, transparent) !important;

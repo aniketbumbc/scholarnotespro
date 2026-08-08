@@ -1,7 +1,9 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2 } from 'lucide-react';
+import Link from 'next/link';
+import { Loader2, BookOpen } from 'lucide-react';
+import { ThemeToggle } from '../src/components/themeToggle';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -36,8 +38,39 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="w-full max-w-[380px]">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4">
+      {/* ambient background */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(ellipse 80% 60% at 20% 15%, color-mix(in srgb, var(--color-accent-300) 35%, transparent), transparent), ' +
+            'radial-gradient(ellipse 70% 55% at 85% 85%, color-mix(in srgb, var(--color-accent-500) 28%, transparent), transparent), ' +
+            'radial-gradient(ellipse 60% 50% at 90% 10%, color-mix(in srgb, var(--color-accent-200) 40%, transparent), transparent)',
+        }}
+      />
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.05]"
+        style={{
+          backgroundImage:
+            'linear-gradient(var(--color-text) 1px, transparent 1px), linear-gradient(90deg, var(--color-text) 1px, transparent 1px)',
+          backgroundSize: '32px 32px',
+        }}
+      />
+
+      {/* top bar: theme + docs */}
+      <div className="absolute right-4 top-4 z-10 flex items-center gap-2">
+        <Link
+          href="/docs"
+          className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs text-foreground/70 hover:bg-card hover:text-foreground"
+        >
+          <BookOpen size={14} />
+          How it works
+        </Link>
+        <ThemeToggle />
+      </div>
+
+      <div className="relative w-full max-w-[380px]">
         {/* brand */}
         <div className="mb-8 text-center">
           <h1 className="font-heading text-[38px] leading-none">ScholarNotesPro</h1>
@@ -47,7 +80,7 @@ export default function LoginPage() {
         </div>
 
         {/* card */}
-        <div className="rounded-lg border border-border bg-card/40 p-6">
+        <div className="rounded-lg border border-border bg-card/70 p-6 shadow-xl backdrop-blur-md">
           <h2 className="font-heading text-[22px]">
             {mode === 'login' ? 'Welcome back' : 'Create your account'}
           </h2>
