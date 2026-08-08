@@ -1,14 +1,15 @@
 import { NextResponse } from "next/server";
-import { deleteSource } from "../../../src/models/source.model";
-import { getDb as db } from "../../../src/config/mongo";
+import { deleteSource, getOwnedSource } from "../../../src/models/source.model";
+import { getUserId } from "../../../src/lib/auth";
 
 export async function DELETE(_: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { id: sourceId } = await params;
+  const { id } = await params;
 
-  // confirm it exists first (so you can return 404 vs silent success)
-  const src = await (await db()).collection("sources").findOne({ _id: sourceId as any });
-  if (!src) return NextResponse.json({ error: "Source not found" }, { status: 404 });
+  const userId = await getUserId();
+  if (!userId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  const owned = await getOwnedSource(id, userId);
+  if (!owned) return NextResponse.json({ error: "Source not found" }, { status: 404 });
 
-  await deleteSource(sourceId);
-  return NextResponse.json({ sourceId, deleted: true, title: src.title });
+  await deleteSource(id);
+  return NextResponse.json({ sourceId: id, deleted: true, title: owned.title });
 }

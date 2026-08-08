@@ -1,11 +1,15 @@
 import { NextResponse } from "next/server";
 import { readFile } from "fs/promises";
-import { getDb as db } from "../../../../src/config/mongo";
+import { getOwnedSource } from "../../../../src/models/source.model";
+import { getUserId } from "../../../../src/lib/auth";
 
 export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id: sourceId } = await params;
 
-  const src = await (await db()).collection("sources").findOne({ _id: sourceId as any });
+  const userId = await getUserId();
+  if (!userId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+
+  const src = await getOwnedSource(sourceId, userId);
   if (!src) return NextResponse.json({ error: "Source not found" }, { status: 404 });
   if (src.sourceType !== "pdf" || !src.filePath) {
     return NextResponse.json({ error: "Not a PDF source" }, { status: 400 });

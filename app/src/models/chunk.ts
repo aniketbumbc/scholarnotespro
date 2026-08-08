@@ -12,6 +12,7 @@ export async function saveChunks(chunks: StoredChunk[]) {
     sourceId: c.sourceId,
     sourceType: c.sourceType,
     title: c.title,
+    userId: c.userId,
     chunkIndex: c.chunkIndex,
     text: c.text,
     snippet: c.snippet,

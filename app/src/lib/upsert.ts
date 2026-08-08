@@ -8,7 +8,7 @@ export async function upsertChunks(embedded: EmbeddedChunk[]) {
     id: c.chunkId,
     values: c.embedding,
     metadata: {
-      // common fields (both types)
+      userId: c.userId,
       sourceId: c.sourceId,
       sourceType: c.sourceType,
       title: c.title,

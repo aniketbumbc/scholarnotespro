@@ -1,9 +1,14 @@
 import { NextResponse } from "next/server";
-import { getDb as db } from "../../../../src/config/mongo";
+import { getOwnedSource } from "../../../../src/models/source.model";
+import { getUserId } from "../../../../src/lib/auth";
 
-export async function GET(_: Request, { params }: { params: { id: string } }) {
+export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const src = await (await db()).collection("sources").findOne({ _id: id as any });
+
+  const userId = await getUserId();
+  if (!userId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  const src = await getOwnedSource(id, userId);
   if (!src) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
   return NextResponse.json({ sourceId: src._id, status: src.status, title: src.title });
 }

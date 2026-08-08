@@ -6,6 +6,7 @@ export type YouTubeChunk = {
   sourceId: string;
   sourceType: "youtube";
   title: string;
+  userId: string;
   chunkIndex: number;
   videoId: string;
   startSeconds: number; // deep-link target
@@ -17,7 +18,7 @@ export type YouTubeChunk = {
 
 export function chunkTranscript(
   segments: TranscriptSegment[],
-  meta: { sourceId: string; title: string; videoId: string; playlistId?: string },
+  meta: { sourceId: string; title: string; videoId: string; playlistId?: string; userId: string },
   windowSeconds = 45 // merge ~45s of speech per chunk
 ): YouTubeChunk[] {
   const chunks: YouTubeChunk[] = [];
@@ -42,6 +43,7 @@ export function chunkTranscript(
       startSeconds: buffer[0].startSeconds, // first segment's start
       endSeconds: last.startSeconds + last.durationSeconds,
       text,
+      userId: meta.userId,
       snippet: text,
       playlistId: meta.playlistId,
     });

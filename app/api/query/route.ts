@@ -7,6 +7,8 @@ import { checkRateLimit } from "../../src/lib/rateLimit";
 import { detectInjection } from "../../src/lib/injectionGuard";
 import { classifyIntent } from "../../src/lib/queryIntent";
 import { summarizeSource } from "../../src/lib/summrize";
+import { getUserId } from "../../src/lib/auth";
+import { getOwnedSource } from "../../src/models/source.model";
 
 const RELEVANCE_THRESHOLD = 0.25; // tune empirically
 
@@ -24,6 +26,9 @@ export async function POST(req: NextRequest) {
       { status: 429, headers: { "Retry-After": rateLimit.retryAfter.toString() } }
     );
   }
+
+  const userId = await getUserId();
+  if (!userId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
   const { question, sourceIds, playlistId } = await req.json();
   if (!question?.trim()) return NextResponse.json({ error: "Question required" }, { status: 400 });
@@ -61,6 +66,9 @@ export async function POST(req: NextRequest) {
         });
       }
 
+      const owned = await getOwnedSource(targetId, userId);
+      if (!owned) return NextResponse.json({ error: "Source not found" }, { status: 404 });
+
       const result = await summarizeSource(targetId);
       if (!result) {
         return NextResponse.json({
@@ -80,7 +88,7 @@ export async function POST(req: NextRequest) {
       break; // fall through to retrieve -> rerank -> generate
   }
 
-  const candidates = await retrieve(question, { topK: 10, sourceIds, playlistId });
+  const candidates = await retrieve(question, { topK: 10, sourceIds, playlistId, userId });
 
   if (candidates.length === 0)
     return NextResponse.json({

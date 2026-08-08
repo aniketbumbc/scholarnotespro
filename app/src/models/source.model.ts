@@ -6,6 +6,7 @@ export type SourceStatus = "queued" | "processing" | "ready" | "failed";
 export async function createSource(input: {
   title: string;
   sourceType: "pdf" | "youtube";
+  userId: string; // user id
   filePath?: string; // pdf
   videoId?: string; // youtube
   playlistId?: string; // youtube, when part of a series
@@ -15,6 +16,7 @@ export async function createSource(input: {
     _id: sourceId as any,
     ...input,
     status: "queued",
+    userId: input.userId,
     createdAt: new Date(),
   });
   return sourceId;
@@ -49,9 +51,9 @@ export async function deleteSource(sourceId: string) {
   return { sourceId, deleted: true };
 }
 
-export async function deletePlaylist(playlistId: string) {
-  // find every source in this playlist
-  const sources = await (await db()).collection("sources").find({ playlistId }).toArray();
+export async function deletePlaylist(playlistId: string, userId: string) {
+  // find every source in this playlist owned by this user
+  const sources = await (await db()).collection("sources").find({ playlistId, userId }).toArray();
   if (sources.length === 0) return { playlistId, deletedCount: 0 };
 
   // delete each one (vectors + chunks + record) via the existing helper
@@ -60,4 +62,13 @@ export async function deletePlaylist(playlistId: string) {
   }
 
   return { playlistId, deletedCount: sources.length };
+}
+
+// returns the source if it belongs to userId, else null
+export async function getOwnedSource(sourceId: string, userId: string) {
+  const database = await db();
+  const src = await database.collection("sources").findOne({ _id: sourceId as any });
+  if (!src) return null;
+  if (src.userId !== userId) return null; // exists but not yours → treat as not found
+  return src;
 }

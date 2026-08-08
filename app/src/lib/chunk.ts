@@ -5,6 +5,7 @@ import type { PageText } from "./pdfExtract";
 export type Chunk = {
   chunkId: string; // UUID — what the LLM cites, what Pinecone keys on
   sourceId: string;
+  userId: string;
   sourceType: "pdf";
   title: string;
   chunkIndex: number; // running order across the whole document
@@ -21,7 +22,7 @@ export type Chunk = {
 
 export async function chunkPages(
   pages: PageText[],
-  meta: { sourceId: string; title: string },
+  meta: { sourceId: string; title: string; userId: string },
   opts: { chunkSize?: number; chunkOverlap?: number } = {}
 ): Promise<Chunk[]> {
   const splitter = new RecursiveCharacterTextSplitter({
@@ -58,6 +59,7 @@ export async function chunkPages(
         chunkIndex: chunkIndex++,
         page: page.page,
         charStart,
+        userId: meta.userId,
         charEnd,
         text,
         snippet: text, // same as text for now; refine later if needed

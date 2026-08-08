@@ -12,6 +12,7 @@ import { fetchTranscriptSegments } from "../lib/youtubeTranscript";
 import { chunkTranscript, YouTubeChunk } from "../lib/youtubeChunkTranscript";
 
 type IngestionJobData = {
+  userId: string;
   sourceId: string;
   title: string;
   filePath?: string;
@@ -22,7 +23,7 @@ type IngestionJobData = {
 const worker = new Worker(
   "ingestion", // only one job at a time
   async (job: Job<IngestionJobData>) => {
-    const { sourceId, title, filePath, videoId, playlistId } = job.data;
+    const { userId, sourceId, title, filePath, videoId, playlistId } = job.data;
 
     // STEP 1 — mark processing (DONE) flows upload → extract → chunk → store → embed → upsert → ready, with idempotent re-ingest
     await setSourceStatus(sourceId, "processing");
@@ -45,14 +46,14 @@ const worker = new Worker(
     if (filePath && !videoId) {
       // STEP 4 — chunk: stamp page / charStart / charEnd / chunkIndex / UUID
       pages = await extractPdfPages(filePath);
-      chunks = await chunkPages(pages, { sourceId, title });
+      chunks = await chunkPages(pages, { sourceId, title, userId });
     } else if (videoId) {
       const segments = await fetchTranscriptSegments(videoId);
       if (segments.length === 0) {
         await new Promise((r) => setTimeout(r, 2000)); // 2s breather between videos
         throw new Error("No transcript available for this video"); // -> marks failed
       }
-      chunks = chunkTranscript(segments, { sourceId, title, videoId, playlistId });
+      chunks = chunkTranscript(segments, { sourceId, title, videoId, playlistId, userId });
     } else {
       throw new Error("No source type provided. filePath: " + filePath + " videoId: " + videoId);
     }

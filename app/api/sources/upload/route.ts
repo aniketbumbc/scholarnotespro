@@ -5,8 +5,11 @@ import { join } from "path";
 import { createSource } from "../../../src/models/source.model";
 import { ingestionQueue } from "../../../src/queue/ingestion.queue";
 import { validatePdf } from "@/app/src/lib/validate";
+import { getUserId } from "../../../src/lib/auth";
 
 export async function POST(req: NextRequest) {
+  const userId = await getUserId();
+  if (!userId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   const form = await req.formData();
   const file = form.get("file") as File | null;
   if (!file) return NextResponse.json({ error: "No file" }, { status: 400 });
@@ -25,8 +28,13 @@ export async function POST(req: NextRequest) {
   await writeFile(filePath, buf);
 
   const title = (form.get("title") as string) || file.name;
-  const sourceId = await createSource({ title, sourceType: "pdf", filePath });
+  const sourceId = await createSource({
+    title,
+    sourceType: "pdf",
+    filePath,
+    userId,
+  });
 
-  await ingestionQueue.add("ingest-pdf", { sourceId, title, filePath });
+  await ingestionQueue.add("ingest-pdf", { sourceId, title, filePath, userId });
   return NextResponse.json({ sourceId, status: "queued" });
 }
