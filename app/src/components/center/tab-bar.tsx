@@ -25,10 +25,6 @@ export function TabBar({ tab, onTab, sourceLabel }: { tab: Tab; onTab: (t: Tab) 
           {t.label}
         </button>
       ))}
-      <span className="flex-1" />
-      {sourceLabel && (
-        <span className="text-[12px] italic text-foreground/50">on {sourceLabel}</span>
-      )}
     </div>
   );
 }

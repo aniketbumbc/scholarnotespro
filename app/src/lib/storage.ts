@@ -2,13 +2,21 @@ import { createClient } from "@supabase/supabase-js";
 
 const BUCKET = process.env.SUPABASE_BUCKET!;
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+const serviceKey = process.env.SUPABASE_SERVICE_KEY;
+const supabase = createClient(supabaseUrl!, serviceKey!);
 
-const supabase = createClient(supabaseUrl!, supabaseKey!);
+// Supabase Storage keys reject some characters — keep the rest of the original name intact
+function sanitizeFileName(name: string): string {
+  return name.replace(/[^a-zA-Z0-9._-]/g, "_");
+}
 
 // upload a PDF buffer, return its storage path
-export async function uploadPdf(sourceId: string, buffer: Buffer): Promise<string> {
-  const path = `${sourceId}.pdf`; // one file per source, keyed by sourceId
+export async function uploadPdf(
+  sourceId: string,
+  fileName: string,
+  buffer: Buffer
+): Promise<string> {
+  const path = `${sourceId}/${sanitizeFileName(fileName)}`; // folder per source, real filename inside
   const { error } = await supabase.storage.from(BUCKET).upload(path, buffer, {
     contentType: "application/pdf",
     upsert: true,

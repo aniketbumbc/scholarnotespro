@@ -109,13 +109,13 @@ function AppContent({ user }: { user: { id: string; email: string; name?: string
   }, []);
 
   const videoTitle =
-    viewerTarget?.kind === 'video'
-      ? sources.find((s) => s.videoId === viewerTarget.videoId)?.title
+    viewerTarget?.kind === 'video' && selected?.videoId === viewerTarget.videoId
+      ? selected?.title
       : undefined;
 
   const pdfTitle =
-    viewerTarget?.kind === 'pdf'
-      ? sources.find((s) => s.sourceId === viewerTarget.sourceId)?.title
+    viewerTarget?.kind === 'pdf' && selected?.sourceId === viewerTarget.sourceId
+      ? selected?.title
       : undefined;
 
 

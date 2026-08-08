@@ -66,7 +66,7 @@ export function SourcesPanel({
         </button>
       </div>
 
-      <div className="px-3 pb-3">
+      <div className="px-3 pb-3 mt-1">
         <button onClick={() => setAddSourceModalOpen(true)} className="flex w-full items-center justify-center gap-1.5 rounded-md bg-primary py-2 text-[13px] text-primary-foreground hover:bg-accent-700">
           <Plus size={14} /> Add source
         </button>

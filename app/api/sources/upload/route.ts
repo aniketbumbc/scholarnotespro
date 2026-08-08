@@ -28,8 +28,8 @@ export async function POST(req: NextRequest) {
     userId,
   });
 
-  // upload the PDF to Supabase (returns the storage path, e.g. "<sourceId>.pdf")
-  const storagePath = await uploadPdf(sourceId, buf);
+  // upload the PDF to Supabase (returns the storage path, e.g. "<sourceId>/<file.name>")
+  const storagePath = await uploadPdf(sourceId, file.name, buf);
 
   // store the storage path on the source, and pass it to the worker
   await updateSourceStoragePath(sourceId, storagePath);
