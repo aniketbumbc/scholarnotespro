@@ -38,6 +38,7 @@ export async function POST(req: NextRequest) {
   // store the storage path on the source, and pass it to the worker
   await updateSourceStoragePath(sourceId, storagePath);
   console.log("[upload] 8 storagePath", storagePath);
+  console.log("[redis] URL Route:", process.env.REDIS_URL);
   await ingestionQueue.add("ingest-pdf", { sourceId, title, storagePath, userId });
   console.log("[upload] 9 queued");
   return NextResponse.json({ sourceId, status: "queued" });
