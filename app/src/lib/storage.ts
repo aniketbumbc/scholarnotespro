@@ -17,11 +17,15 @@ export async function uploadPdf(
   buffer: Buffer
 ): Promise<string> {
   const path = `${sourceId}/${sanitizeFileName(fileName)}`; // folder per source, real filename inside
+  console.log("[uploadPdf] 1 path", path);
   const { error } = await supabase.storage.from(BUCKET).upload(path, buffer, {
     contentType: "application/pdf",
     upsert: true,
   });
-  if (error) throw new Error(`Storage upload failed: ${error.message}`);
+  if (error) {
+    console.error("[uploadPdf] 2 error", error);
+    throw new Error(`Storage upload failed: ${error.message}`);
+  }
   return path;
 }
 
