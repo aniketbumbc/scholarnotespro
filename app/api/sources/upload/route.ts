@@ -24,6 +24,7 @@ export async function POST(req: NextRequest) {
 
   const title = (form.get("title") as string) || file.name;
   console.log("[upload] 5 title", title);
+  console.log("[redis] URL Route:", process.env.REDIS_URL);
   // create the source first — we key the storage path by sourceId
   const sourceId = await createSource({
     title,

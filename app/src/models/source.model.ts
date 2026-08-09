@@ -85,8 +85,12 @@ export async function getOwnedSource(sourceId: string, userId: string) {
 }
 
 export async function updateSourceStoragePath(sourceId: string, storagePath: string) {
-  const database = await db();
-  await database
-    .collection("sources")
-    .updateOne({ _id: sourceId as any }, { $set: { storagePath } });
+  try {
+    const database = await db();
+    await database
+      .collection("sources")
+      .updateOne({ _id: sourceId as any }, { $set: { storagePath } });
+  } catch (e) {
+    console.error(`[updateSourceStoragePath] failed for ${sourceId}`, e);
+  }
 }
