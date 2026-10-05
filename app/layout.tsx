@@ -1,6 +1,12 @@
+import type { Metadata } from 'next';
 import { Cormorant_Garamond, Lora } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
 import './globals.css';
+
+export const metadata: Metadata = {
+  title: 'Scholar Notes Pro',
+  description: 'Upload PDFs and YouTube videos, then chat, build study guides and mind maps from your sources.',
+};
 
 const heading = Cormorant_Garamond({
   subsets: ['latin'],
