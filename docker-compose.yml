@@ -1,0 +1,73 @@
+services:
+  # Redis for BullMQ. Internal only: never on the "web" network.
+  scholarnotes-redis:
+    image: redis:7-alpine
+    container_name: "scholarnotes-redis"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    expose:
+      - "6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - default
+
+  # BullMQ ingestion worker. Internal only.
+  scholarnotes-worker:
+    build:
+      context: .
+      secrets:
+        - dotenv
+    container_name: "scholarnotes-worker"
+    command: ["node_modules/.bin/tsx", "app/src/workers/ingestion.worker.ts"]
+    env_file:
+      - ./.env
+    environment:
+      - NODE_ENV=production
+      - REDIS_URL=redis://scholarnotes-redis:6379
+    depends_on:
+      scholarnotes-redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - default
+
+  # Next.js app → reverse proxy on the "web" network targets scholarnotes-web:3000
+  scholarnotes-web:
+    build:
+      context: .
+      secrets:
+        - dotenv
+    container_name: "scholarnotes-web"
+    env_file:
+      - ./.env
+    environment:
+      - NODE_ENV=production
+      - REDIS_URL=redis://scholarnotes-redis:6379
+    expose:
+      - "3000"
+    depends_on:
+      scholarnotes-redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - default
+      - web
+
+# `next build` needs real env values (clients are created at import time);
+# passed as a BuildKit secret so it never lands in an image layer.
+secrets:
+  dotenv:
+    file: ./.env
+
+volumes:
+  redis-data:
+
+networks:
+  web:
+    external: true

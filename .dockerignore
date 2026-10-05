@@ -1,0 +1,15 @@
+node_modules
+.next
+.git
+.gitignore
+.vscode
+.env*
+*.tsbuildinfo
+next-env.d.ts
+uploadspdf
+*.pdf
+Dockerfile
+docker-compose.yml
+.dockerignore
+npm-debug.log*
+.DS_Store
