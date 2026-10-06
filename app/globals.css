@@ -127,6 +127,25 @@ button:not(:disabled) {
   0%, 100% { transform: translateY(0); opacity: 0.4; }
   50%      { transform: translateY(-3px); opacity: 1; }
 }
+/* docs page pipeline: dashes travel along connectors, stages light up in turn */
+@keyframes snp-flow {
+  from { background-position: 0 0; }
+  to   { background-position: 12px 0; }
+}
+@keyframes snp-glow {
+  0%, 18%, 100% { transform: scale(1); }
+  6%, 12% {
+    transform: scale(1.08);
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+    color: #fff;
+    box-shadow: 0 10px 30px -8px color-mix(in srgb, var(--color-accent) 60%, transparent);
+  }
+}
+@keyframes snp-fill-x {
+  from { width: 0; }
+  to   { width: 100%; }
+}
 @media (prefers-reduced-motion: reduce) {
   [class*="animate-[snp-"] {
     animation: none !important;

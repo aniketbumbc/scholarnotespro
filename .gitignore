@@ -45,3 +45,4 @@ uploadspdf/*
 
 # Ignore all PDF files
 *.pdf
+demo.txt
