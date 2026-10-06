@@ -67,9 +67,11 @@ export default function LoginPage() {
           }}
         />
 
-        <div className="relative flex items-center gap-2.5">
-          <Logo size={30} />
-          <span className="font-heading text-[22px] leading-none">ScholarNotesPro</span>
+        <div className="relative flex items-center gap-3">
+          <Logo size={44} />
+          <span className="font-heading text-[34px] font-semibold leading-none tracking-tight text-(--color-accent-700) in-data-[theme=dark]:text-(--color-accent-400)">
+            ScholarNotesPro
+          </span>
         </div>
 
         <div className="relative flex flex-1 flex-col justify-center gap-8 py-10">
@@ -88,7 +90,7 @@ export default function LoginPage() {
 
       {/* right: sign in / sign up */}
       <section
-        className="relative flex items-center justify-center px-4 py-16"
+        className="relative flex items-center justify-center px-4 py-16 lg:pt-36"
         style={{
           background:
             "radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--color-text) 9%, transparent) 1px, transparent 0) 0 0 / 22px 22px, " +
