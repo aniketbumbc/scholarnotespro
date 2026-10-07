@@ -1,5 +1,6 @@
 import { ThemeToggle } from '../themeToggle';
 import { AuthUser } from '../auth/auth-gate';
+import { Logo } from '../logo';
 
 
 export function Header({
@@ -13,7 +14,8 @@ export function Header({
 }) {
   return (
     <header className="flex h-[54px] min-w-[1180px] items-center gap-4 border-b border-border bg-background px-4">
-      <div className="flex items-baseline gap-2">
+      <div className="flex items-center gap-2">
+        <Logo size={24} />
         <span className="font-heading text-[21px] tracking-tight">Scholar Notes Pro</span>
         <span className="text-[10px] uppercase tracking-[0.14em] text-foreground/45">
           Notes desk
@@ -30,7 +32,7 @@ export function Header({
         <span className="text-xs text-foreground/55">{userEmail}</span>
         <button
           onClick={onLogout}
-          className="rounded-md border border-border px-2.5 py-1 text-xs hover:bg-card"
+          className="rounded-md bg-primary px-2.5 py-1 text-xs text-primary-foreground hover:bg-(--color-accent-700)"
         >
           Log out
         </button>
