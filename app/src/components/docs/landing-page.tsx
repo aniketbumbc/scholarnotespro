@@ -100,7 +100,7 @@ export function LandingPage({
             </span>
           </Link>
           <div className="flex items-center gap-2">
-            {showBackLink ? (
+            {showBackLink && (
               <Link
                 href="/login"
                 className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs text-foreground/70 hover:bg-card hover:text-foreground"
@@ -108,13 +108,6 @@ export function LandingPage({
                 <ArrowLeft size={14} />
                 Back to sign in
               </Link>
-            ) : (
-              <a
-                href={ctaHref}
-                className="rounded-md border border-border px-3 py-1.5 text-xs text-foreground/70 hover:bg-card hover:text-foreground"
-              >
-                Sign in
-              </a>
             )}
             <ThemeToggle />
           </div>
