@@ -14,7 +14,13 @@ export function parseYouTubeUrl(raw: string): ParsedYouTube {
     return { kind: "playlist", playlistId };
   }
 
-  const m = url.pathname.match(/^\/(?:shorts|embed)\/([^/]+)/);
+  // youtu.be/<id>
+  if (host === "youtu.be") {
+    const id = url.pathname.slice(1).split("/")[0];
+    if (id) return { kind: "video", videoId: id };
+  }
+
+  const m = url.pathname.match(/^\/(?:shorts|embed|live)\/([^/?]+)/);
   if (m) return { kind: "video", videoId: m[1] };
 
   // watch?v=<id>  — treat as SINGLE video even if &list= is present

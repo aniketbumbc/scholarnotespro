@@ -8,8 +8,7 @@ export async function POST(req: NextRequest) {
   const userId = await getUserId();
   if (!userId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
-  const { url, title } = await req.json();
-  const videoId = url.split("v=")[1];
+  const { url } = await req.json();
   if (!url) return NextResponse.json({ error: "No url" }, { status: 400 });
 
   let parsed;
@@ -21,8 +20,12 @@ export async function POST(req: NextRequest) {
 
   // --- SINGLE VIDEO: one source, one job ---
   if (parsed.kind === "video") {
-    const videoDetails = await fetchVideoDetails(videoId);
-    const videoTitle = videoDetails.items[0].snippet.title;
+    // parsed.videoId covers watch?v=, /shorts/, /embed/ and youtu.be links
+    const videoDetails = await fetchVideoDetails(parsed.videoId);
+    const videoTitle = videoDetails.items?.[0]?.snippet?.title;
+    if (!videoTitle) {
+      return NextResponse.json({ error: "Video not found or not public" }, { status: 404 });
+    }
     const sourceId = await createSource({
       title: videoTitle || "YouTube Video", // enriched during ingestion (oEmbed/transcript)
       sourceType: "youtube",
