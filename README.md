@@ -69,6 +69,7 @@ npm run worker         # ingestion worker (separate terminal)
 | `PINECONE_API_KEY`, `PINECONE_INDEX` | Vector store (index dimension 1536) |
 | `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `SUPABASE_BUCKET` | PDF storage |
 | `YOUTUBE_API_KEY`, `YOUTUBE_API_VIDEO_DETAILS_URL`, `YOUTUBE_API_PLAYLIST_ITEMS_URL` | YouTube metadata |
+| `SUPADATA_API_KEY` | YouTube transcripts via [Supadata](https://supadata.ai). **Required in production** — YouTube blocks transcript scraping from VPS/datacenter IPs. Optional locally (falls back to scraping). |
 | `JWT_SECRET` | Signs auth cookies — use a long random value in production |
 
 ## Deployment (VPS + Docker + Caddy)
