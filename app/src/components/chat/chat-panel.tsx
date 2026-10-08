@@ -220,7 +220,7 @@ export function ChatPanel({
             <button
               onClick={() => ask()}
               disabled={!canAsk || !input.trim()}
-              className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-accent-700 disabled:opacity-60"
+              className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-accent-hover disabled:opacity-60"
             >
               Ask
             </button>

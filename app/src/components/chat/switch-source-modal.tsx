@@ -33,7 +33,7 @@ export function SwitchSourceModal({
           </button>
           <button
             onClick={onConfirm}
-            className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-accent-700"
+            className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-accent-hover"
           >
             Switch & clear chat
           </button>

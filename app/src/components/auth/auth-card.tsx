@@ -100,7 +100,7 @@ export function AuthCard() {
           <button
             onClick={submit}
             disabled={busy}
-            className="mt-1 flex items-center justify-center gap-1.5 rounded-md bg-primary py-2.5 text-[14px] text-primary-foreground hover:bg-accent-700 disabled:opacity-60"
+            className="mt-1 flex items-center justify-center gap-1.5 rounded-md bg-primary py-2.5 text-[14px] text-primary-foreground hover:bg-accent-hover disabled:opacity-60"
           >
             {busy ? <Loader2 size={15} className="animate-spin" /> : null}
             {mode === "login" ? "Sign in" : "Create account"}

@@ -95,7 +95,7 @@ export function LandingPage({
         <div className="mx-auto flex h-14 max-w-[1180px] items-center justify-between px-4">
           <Link href="/login" className="flex items-center gap-2.5">
             <Logo size={26} />
-            <span className="font-heading text-[20px] font-semibold leading-none text-(--color-accent-700) in-data-[theme=dark]:text-(--color-accent-400)">
+            <span className="font-heading text-[20px] font-semibold leading-none text-(--color-accent-700)">
               ScholarNotesPro
             </span>
           </Link>
@@ -199,7 +199,7 @@ export function LandingPage({
           </p>
           <Link
             href={ctaHref}
-            className="group mt-5 inline-flex items-center gap-1.5 rounded-md bg-primary px-5 py-2.5 text-[14px] text-primary-foreground shadow-lg hover:bg-(--color-accent-700)"
+            className="group mt-5 inline-flex items-center gap-1.5 rounded-md bg-primary px-5 py-2.5 text-[14px] text-primary-foreground shadow-lg hover:bg-accent-hover"
           >
             Get started
             <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />

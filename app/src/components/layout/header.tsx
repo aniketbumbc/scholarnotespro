@@ -32,7 +32,7 @@ export function Header({
         <span className="text-xs text-foreground/55">{userEmail}</span>
         <button
           onClick={onLogout}
-          className="rounded-md bg-primary px-2.5 py-1 text-xs text-primary-foreground hover:bg-(--color-accent-700)"
+          className="rounded-md bg-primary px-2.5 py-1 text-xs text-primary-foreground hover:bg-accent-hover"
         >
           Log out
         </button>

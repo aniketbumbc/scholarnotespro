@@ -38,7 +38,7 @@ export function DocsHero({ aside, ctaHref }: { aside?: React.ReactNode; ctaHref:
           </span>
           <h1 className="mt-4 font-heading text-[40px] leading-[1.02] sm:text-[50px]">
             Your sources,{" "}
-            <span className="text-(--color-accent-700) in-data-[theme=dark]:text-(--color-accent-400)">
+            <span className="text-(--color-accent-700)">
               turned into answers.
             </span>
           </h1>
@@ -50,7 +50,7 @@ export function DocsHero({ aside, ctaHref }: { aside?: React.ReactNode; ctaHref:
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <Link
               href={ctaHref}
-              className="group flex items-center gap-1.5 rounded-md bg-primary px-4 py-2.5 text-[14px] text-primary-foreground shadow-lg hover:bg-(--color-accent-700)"
+              className="group flex items-center gap-1.5 rounded-md bg-primary px-4 py-2.5 text-[14px] text-primary-foreground shadow-lg hover:bg-accent-hover"
             >
               Get started
               <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />

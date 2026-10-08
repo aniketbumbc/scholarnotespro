@@ -8,17 +8,6 @@
   --color-text: #201f1d;
   --color-divider: color-mix(in srgb, #201f1d 14%, transparent);
 
-  --color-accent: #6f52a8;
-  --color-accent-100: #f4f0fc;
-  --color-accent-200: #e3daf6;
-  --color-accent-300: #c9b7ea;
-  --color-accent-400: #a68fd8;
-  --color-accent-500: #8a6dc4;
-  --color-accent-600: #6f52a8;
-  --color-accent-700: #573d8a;
-  --color-accent-800: #3f2b66;
-  --color-accent-900: #2a1c45;
-
   --snp-ok: #3d7049;   /* ready */
   --snp-bad: #a8412a;  /* failed */
 
@@ -27,11 +16,43 @@
   --radius-md: 8px;
 }
 
+/* --- purple accent (light) ---
+   Registered as theme colors so `bg-accent-100`, `hover:bg-accent-hover` etc. work.
+   `static` keeps every shade emitted — many are only used in inline styles.
+   Usage convention: 100–300 = tints/backgrounds, 400 = borders, 500–900 = icons/text. */
+@theme static {
+  --color-accent: #7457dc;       /* buttons — white text 5.1:1 */
+  --color-accent-hover: #5b3fc4;
+  --color-accent-100: #f3effd;
+  --color-accent-200: #e4dcfa;
+  --color-accent-300: #cbbdf5;
+  --color-accent-400: #a993ec;
+  --color-accent-500: #8a6fe3;
+  --color-accent-600: #7457dc;
+  --color-accent-700: #5b3fc4;
+  --color-accent-800: #4c33a8;
+  --color-accent-900: #3d2a87;
+}
+
 [data-theme="dark"] {
   --color-bg: #1a1917;
   --color-surface: #242220;
   --color-text: #ece7e0;
   --color-divider: color-mix(in srgb, #ece7e0 20%, transparent);
+
+  /* same convention, re-tuned for a dark background:
+     tints go deep, text shades go light so they stay readable */
+  --color-accent: #7c5ce0;       /* buttons — white text 4.7:1, visible on bg */
+  --color-accent-hover: #6b4dd4;
+  --color-accent-100: #251f3a;
+  --color-accent-200: #2f2650;
+  --color-accent-300: #43376f;
+  --color-accent-400: #6a55b8;
+  --color-accent-500: #9d85ee;
+  --color-accent-600: #a48df0;
+  --color-accent-700: #b8a6f5;
+  --color-accent-800: #cbbdfa;
+  --color-accent-900: #ddd3fc;
 }
 
 /* --- map to Tailwind v4 theme tokens (so `bg-background`, `text-primary` etc. work) --- */
@@ -74,7 +95,7 @@ button:not(:disabled) {
 }
 [data-theme="dark"] .react-pdf__Page__textContent mark.pdf-cite-mark {
   mix-blend-mode: screen;
-  background: color-mix(in srgb, var(--color-accent-400) 55%, transparent) !important;
+  background: color-mix(in srgb, var(--color-accent-500) 55%, transparent) !important;
 }
 /* the fill level rises and falls */
 @keyframes water-rise {
